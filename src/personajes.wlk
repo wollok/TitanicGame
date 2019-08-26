@@ -6,8 +6,8 @@ object pelicula
 	method inicio()
 	{
 		game.title("TitanicGame")
-		game.height(10)
-		game.width(10)
+		game.height(7)
+		game.width(7)
 		game.ground("blue.jpg")
 
 		game.addVisual(titanic)
@@ -18,46 +18,70 @@ object pelicula
 }
 
 object titanic{
-	var property imagen = "titanic.png"
-	var property position = game.origin()
+	var imagen = "titanic.png"
+	var position = game.at(2,2)
 	
-	method image() = imagen
+	method image() { return imagen}
+	method position() { return position}
 	
-	method golpeate(){
+	method hundite(){
 		imagen = "titanic-hundiendo.jpg"
 	}
-	
-	// --- Movimiento --- //
-	
-	method irArriba(){
-		self.position(self.position().up(1))
-	}
-	
-	method irAbajo(){
-		self.position(self.position().down(1))
-	}
-	
-	method irIzquierda(){
-		self.position(self.position().left(1))
-	}
-		
-	method irDerecha(){
-		self.position(self.position().right(1))
-	}	
-}
+}	
 
 
 object iceberg{
+	var distancia = 2
 	
-	var property position = game.at(8,4)
-	
-	method image() = "iceberg.jpeg"
+	method image() {return "iceberg.jpeg"}
+	method position() {return titanic.position().right(distancia)}
 	
 	method acercarse(){
-		self.position(self.position().left(1))
+		distancia = distancia - 1
 	}
 	
 	method chocar(){
-		titanic.golpeate()
+		titanic.hundite()
+		game.addVisual(puerta)
+
+	}
+}
+
+object puerta {
+	var ocupante = jack
+	var position = game.at(2,5)
+
+	method position() { return position}
+	method image() = ocupante.image()
+	
+	method salva() {
+		ocupante.sobrevivi()
+	}
+	method ocupante() { return ocupante}
+	
+	method serOcupadaPor(alguien){
+		ocupante = alguien
+	}
+}
+
+object jack {
+	var dibujo
+	method image() = "jack.png"
+	
+	method sobrevivi(){
+		dibujo = "naufragio"
+	}
+}
+
+object rose {
+	var nombre = "rosa"
+
+	method image() = "rose.jpeg"
+
+	method sobrevivi(){
+		nombre = "marina"
+	}
+	method comoTeLlamas(){
+		return nombre
 	}
 }

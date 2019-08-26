@@ -2,14 +2,6 @@ import personajes.*
 import wollok.game.*
 
 program pelicula {
-  
-	game.title("TitanicGame")
-	game.height(10)
-	game.width(10)
-	game.ground("blue.jpg")
-
-	game.addVisual(titanic)
-	game.addVisual(iceberg)
+	pelicula.inicio()
 	
-	game.start()
 }
