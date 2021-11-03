@@ -9,8 +9,6 @@ program pelicula {
 
 		game.addVisual(titanic)
 		game.addVisual(iceberg)
-		game.addVisual(capitan)
-		game.addVisual(barcoPesquero)
 	
 		game.start()
 	

@@ -1,0 +1,12 @@
+import personajes.*
+
+program pelicula {
+
+    pelicula.inicio()
+    titanic.tormenta()
+    titanic.tormenta()
+    iceberg.aparecer()
+    iceberg.moverse()
+    
+    
+}
