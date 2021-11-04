@@ -1,11 +1,9 @@
 import wollok.game.*
 
 
-// Este objeto esta para cargar mas facil la config en la consola
-object pelicula
-{
-	method inicio()
-	{
+object pelicula {
+	
+	method iniciar() {
 		game.title("TitanicGame")
 		game.height(14)
 		game.width(12)
@@ -13,12 +11,11 @@ object pelicula
 
         game.addVisual(mar)	
 		game.addVisual(titanic)
-//		game.addVisual(iceberg)
 		game.addVisual(viento)
 		game.addVisual(barcoRescate)
 		game.onCollideDo(barcoRescate, {victima => victima.salvar()})
-			
 		game.start()
+			
 	}
 }
 
@@ -42,34 +39,36 @@ object titanic{
 		hundido = true
 		puerta.aparecer()
 	}
-	method tormenta() {
+	method sacudir() {
 		position = position.up(1)
 		game.schedule(200,{position = position.down(1)})
 	}
 	method salvar(){
 		hundido = not hundido
 	}
-	method momentoFeliz(){
-		animacion.aparecer()
+	method vivirMomentoFeliz(){
+		momentoFeliz.aparecer()
 	}
 
 }	
 
 object barcoRescate {
 	
-	var position = game.at(0,3)
+	var position = game.at(-1,3)
 	const image = "rescate.png"
 	
 	method image() { return image }
 	method position() {return position}
 	
-	method aparecer(){
-		game.addVisual(barcoRescate)
-		game.onCollideDo(barcoRescate, {victima => victima.salvar()})
-	}
+
 	method moverse() {
 		position = position.right(1)
 	}
+	
+	method retroceder(){
+		position = position.left(2)
+	}
+	method chocar(){}
 	
 	
 	
@@ -78,6 +77,8 @@ object barcoRescate {
 object mar {
 	method position() = game.origin()
 	method image() = "mar.jpg"
+	
+	method tormenta() {titanic.sacudir()}
 }
 
 object iceberg{
@@ -90,6 +91,9 @@ object iceberg{
 	
 	method moverse(){
 		position = position.left(1)
+	}
+	method retroceder(){
+		position = position.right(2)
 	}
 	method aparecer(){
 		game.addVisual(iceberg)
@@ -138,7 +142,7 @@ object jack {
 	method image() {return image}
 	
 	method sobrevivir(){
-		image = "dicaprio.jpg"
+		image = "jackMayor.jpg"
 	}
 	
 	
@@ -149,16 +153,20 @@ object jack {
 
 object nadie {
 	
-	method image() = "puerta.jpg"
+	method image() = "puerta.png"
+	method pedirAyuda(mensaje) {return "Ya no hay nadie"}
+	method sobrevivir(){}
 }
 
 object rose {
 	var nombre = "Rosa Bukater"
-
-	method image() = "rose.png"
+	var image = "rose.png"
+	
+	method image() {return image}
 
 	method sobrevivir(){
 		nombre = "Sra Dawson"
+		image = "roseMayor.jpg"
 	}
 	
 	method comoTeLlamas(){
@@ -172,16 +180,16 @@ object rose {
 }
 
 
-object animacion {
+object momentoFeliz{
 	var nro  = 1
-    var property position  = game.at(3,10)
+    var property position  = game.at(4,9)
 	method siguiente() {
 		nro = (nro + 1)%10 + 1
 	}
 	method image() = "titanic-" + nro + ".gif"
 	
 	method aparecer() {
-		game.addVisual(animacion)
+		game.addVisual(momentoFeliz)
 	}
 
 }
@@ -190,13 +198,18 @@ object viento {
 	var property image = "blue.jpg"
 	var property position = game.at(3,3)
 	method soplar() {
-		game.onTick(40,"viento",{animacion.siguiente()})
+		if(!game.hasVisual(momentoFeliz)) game.addVisual(momentoFeliz)
+		game.onTick(40,"viento",{momentoFeliz.siguiente()})
 	}
 	method detener() {
 		game.removeTickEvent("viento")
 	}
-	method chocar(){}
-	method salvar(){}
+	method chocar(){ 
+		self.soplar()
+	}
+	method salvar(){
+		
+	}
 
 }
 

@@ -1,12 +1,16 @@
 import personajes.*
+import wollok.game.*
 
 program pelicula {
 
-    pelicula.inicio()
-    titanic.tormenta()
-    titanic.tormenta()
+    pelicula.iniciar()
+    mar.tormenta()
     iceberg.aparecer()
     iceberg.moverse()
+    iceberg.moverse()
+    iceberg.moverse()
+    
+    
     
     
 }
