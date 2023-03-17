@@ -1,0 +1,8 @@
+import personajes.*
+import wollok.game.*
+
+program titanicLaPelicula {
+
+    pelicula.iniciar()
+   
+}

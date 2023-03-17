@@ -4,18 +4,59 @@ import wollok.game.*
 object pelicula {
 	
 	method iniciar() {
-		game.title("TitanicGame")
-		game.height(14)
+		game.title("Titanic Game")
+		game.height(12)
 		game.width(12)
 		game.ground("blue.jpg")
-
-        game.addVisual(mar)	
+		game.addVisual(mar)	
 		game.addVisual(titanic)
-		game.addVisual(viento)
-		game.addVisual(barcoRescate)
-		game.onCollideDo(barcoRescate, {victima => victima.salvar()})
 		game.start()
 			
+	}
+		
+	method momentoFeliz() {
+		//game.addVisual(viento)
+		game.addVisual(momentoFeliz)
+	}
+	
+	method peligro(){
+		if(game.hasVisual(momentoFeliz)) game.removeVisual(momentoFeliz)
+	
+		game.addVisual(iceberg)
+		game.onCollideDo(iceberg, {obstaculo=>obstaculo.chocar()})
+	}
+	
+	method pedidoAuxilio(){
+		tabla.seSube(rose)
+		tabla.pedirAyuda()
+	}
+	
+	method rescate(){
+		game.addVisual(barcoRescate)
+		game.onCollideDo(barcoRescate, {victima => victima.salvar()})
+	}
+	
+	method versionOriginal() {
+		self.momentoFeliz()
+		viento.soplar()
+		game.schedule(1000,{viento.detener()})
+		game.schedule(2000,{self.peligro()})
+		game.schedule(3000,{
+			8.times{x => 
+				game.schedule(x*200,{iceberg.avanzar()})
+			}
+		})
+		game.schedule(6000,{self.pedidoAuxilio()})
+		game.schedule(7000,{self.rescate()})
+		game.schedule(8000,{
+			4.times{x=> 
+				game.schedule(x*200,{barcoRescate.avanzar()})
+			}
+		})
+		game.schedule(10000,{game.say(tabla,"Ahora soy " + rose.comoTeLlamas())})
+		
+		
+		
 	}
 }
 
@@ -37,37 +78,33 @@ object titanic{
 	
 	method chocar(){
 		hundido = true
-		puerta.aparecer()
+		game.addVisual(tabla)
 	}
+	
 	method sacudir() {
 		position = position.up(1)
-		game.schedule(200,{position = position.down(1)})
+		game.schedule(100,{position = position.down(2)})
+		game.schedule(200,{position = position.up(1)})
+		
 	}
 	method salvar(){
 		hundido = not hundido
 	}
-	method vivirMomentoFeliz(){
-		momentoFeliz.aparecer()
-	}
-
 }	
 
 object barcoRescate {
 	
-	var position = game.at(-1,3)
+	var position = game.at(1,3)
 	const image = "rescate.png"
 	
 	method image() { return image }
 	method position() {return position}
 	
 
-	method moverse() {
+	method avanzar() {
 		position = position.right(1)
 	}
 	
-	method retroceder(){
-		position = position.left(2)
-	}
 	method chocar(){}
 	
 	
@@ -82,23 +119,18 @@ object mar {
 }
 
 object iceberg{
-	var position = game.at(11,3)
+	var position = game.at(0,3)
 	
-	method image() {return "iceberg.jpeg"}
+	method image() {return "iceberg.png"}
 	method position() {
 		return position
 	}
 	
-	method moverse(){
-		position = position.left(1)
+	method avanzar(){
+		position = position.right(1)
 	}
 	method retroceder(){
-		position = position.right(2)
-	}
-	method aparecer(){
-		game.addVisual(iceberg)
-		game.onCollideDo(iceberg, {obstaculo=>obstaculo.chocar()})
-		
+		position = position.left(2)
 	}
 	
 	method alcanzaA(elemento){
@@ -108,14 +140,14 @@ object iceberg{
 
 }
 
-object puerta {
+object tabla {
 	var ocupante = nadie
-
-	method position() { return titanic.position().left(3) }
+	var property position = titanic.position().left(3)
 	method image() = ocupante.image()
 	
 	method salvar() {
 		ocupante.sobrevivir()
+		position = position.up(1)
 	}
 	method ocupante() { return ocupante }
 	
@@ -123,16 +155,14 @@ object puerta {
 		ocupante = alguien
 	}
 	method chocar() {
-		puerta.pedirAyuda()
+		self.pedirAyuda()
 	}
 
 	method pedirAyuda(){
-		game.say(puerta, ocupante.pedirAyuda("Auxilio"))
+		game.say(self, ocupante.pedirAyuda("Auxilio"))
 	}
 	
-	method aparecer(){
-		game.addVisual(puerta)
-	}
+
 	
 }
 
@@ -182,15 +212,12 @@ object rose {
 
 object momentoFeliz{
 	var nro  = 1
-    var property position  = game.at(4,9)
+    var property position  = game.at(4,7)
 	method siguiente() {
 		nro = (nro + 1)%10 + 1
 	}
-	method image() = "titanic-" + nro + ".gif"
+	method image() = "titanic-" + nro.toString() + ".gif"
 	
-	method aparecer() {
-		game.addVisual(momentoFeliz)
-	}
 
 }
 
